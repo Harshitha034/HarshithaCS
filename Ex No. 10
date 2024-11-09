@@ -1,44 +1,36 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
-# 1. Generate synthetic data (replace with actual data if needed)
-X, _ = make_blobs(n_samples=300, centers=3, cluster_std=0.60, random_state=0)
+# 1. Generate synthetic data (replace with your data if needed)
+X, _ = make_blobs(n_samples=300, centers=3, random_state=0)
 
-# 2. Standardize features
+# 2. Standardize data
 X_scaled = StandardScaler().fit_transform(X)
 
-# 3. Plot standardized data
+# 3. Plot original standardized data
 plt.scatter(X_scaled[:, 0], X_scaled[:, 1], s=30, c='gray', alpha=0.5)
 plt.title("Standardized Data")
 plt.show()
 
-# 4. Apply K-Means with K=3
-kmeans = KMeans(n_clusters=3, random_state=0)
-y_kmeans = kmeans.fit_predict(X_scaled)
-
-# 5. Plot clusters with center points
-plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=y_kmeans, s=30, cmap='viridis')
+# 4. Apply K-Means with K=3 and plot the results
+kmeans = KMeans(n_clusters=3, random_state=0).fit(X_scaled)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=kmeans.labels_, s=30, cmap='viridis')
 plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], c='red', s=200, alpha=0.5, marker='X')
-plt.title("K-Means Clustering (K=3)")
+plt.title("K-Means (K=3) Clustering")
 plt.show()
 
-# 6. Elbow Method to find optimal K
+# 5. Elbow Method to find optimal K
 wcss = [KMeans(n_clusters=k, random_state=0).fit(X_scaled).inertia_ for k in range(1, 11)]
 plt.plot(range(1, 11), wcss, marker='o', linestyle='--')
 plt.title('Elbow Method')
 plt.show()
 
-# 7. Apply K-Means with optimal K (assuming K=3 from elbow method)
-optimal_k = 3
-kmeans_optimal = KMeans(n_clusters=optimal_k, random_state=0)
-y_kmeans_optimal = kmeans_optimal.fit_predict(X_scaled)
-
-# 8. Plot clusters with center points for optimal K
-plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=y_kmeans_optimal, s=30, cmap='viridis')
+# 6. Reapply K-Means with optimal K (assumed K=3)
+kmeans_optimal = KMeans(n_clusters=3, random_state=0).fit(X_scaled)
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=kmeans_optimal.labels_, s=30, cmap='viridis')
 plt.scatter(kmeans_optimal.cluster_centers_[:, 0], kmeans_optimal.cluster_centers_[:, 1], c='red', s=200, alpha=0.5, marker='X')
-plt.title(f"K-Means Clustering (K={optimal_k})")
+plt.title("Optimal K-Means Clustering (K=3)")
 plt.show()
